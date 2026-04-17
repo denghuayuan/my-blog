@@ -1,12 +1,15 @@
 import { Schema, Types, model } from 'mongoose';
 
 export type ArticleStatus = 'draft' | 'published';
+export type ArticleBodyType = 'plain' | 'markdown';
 
 export interface ArticleDocument {
   title: string;
   slug: string;
   summary?: string;
+  bodyType: ArticleBodyType;
   content: string;
+  coverAssetId?: Types.ObjectId;
   status: ArticleStatus;
   authorId: Types.ObjectId;
   createdAt: Date;
@@ -34,9 +37,18 @@ const articleSchema = new Schema<ArticleDocument>(
       trim: true,
       maxlength: 240
     },
+    bodyType: {
+      type: String,
+      enum: ['plain', 'markdown'],
+      default: 'plain'
+    },
     content: {
       type: String,
       required: true
+    },
+    coverAssetId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Asset'
     },
     status: {
       type: String,

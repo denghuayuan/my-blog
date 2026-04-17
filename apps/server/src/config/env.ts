@@ -1,5 +1,8 @@
 export const env = {
   port: Number(process.env.PORT || 3000),
+  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  serverBaseUrl: process.env.SERVER_BASE_URL || 'http://localhost:3000',
+  uploadDir: process.env.UPLOAD_DIR || 'uploads',
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminEmail: process.env.ADMIN_EMAIL || 'admin@example.com',
   adminPassword: process.env.ADMIN_PASSWORD || 'change-this-password',

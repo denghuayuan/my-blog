@@ -39,6 +39,7 @@ export async function loginAdmin(input: LoginInput) {
   return {
     accessToken,
     user: {
+      displayName: user.displayName,
       email: user.email,
       role: user.role,
       username: user.username

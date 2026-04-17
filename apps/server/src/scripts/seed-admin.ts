@@ -13,7 +13,9 @@ async function seedAdmin() {
   const passwordHash = await bcrypt.hash(env.adminPassword, 10);
 
   if (existingAdmin) {
-    existingAdmin.username = env.adminUsername;
+    existingAdmin.username = env.adminUsername.toLowerCase();
+    existingAdmin.displayName = env.adminUsername;
+    existingAdmin.bio = existingAdmin.bio || '';
     existingAdmin.role = 'admin';
     existingAdmin.passwordHash = passwordHash;
 
@@ -24,7 +26,9 @@ async function seedAdmin() {
   }
 
   const adminUser = await UserModel.create({
-    username: env.adminUsername,
+    username: env.adminUsername.toLowerCase(),
+    displayName: env.adminUsername,
+    bio: '',
     email: env.adminEmail,
     passwordHash,
     role: 'admin'
