@@ -9,11 +9,11 @@ const route = useRoute()
 
 const authorLink = computed(() => authStore.authorBlogPath)
 const authorLinkLabel = computed(() => (authStore.displayName ? `${authStore.displayName} 的主页` : '作者主页'))
-const isHomeRoute = computed(() => route.name === 'home' || route.name === 'blog-home')
+const isBlogHomeRoute = computed(() => route.name === 'blog-home')
 </script>
 
 <template>
-  <RouterView v-if="isHomeRoute" />
+  <RouterView v-if="isBlogHomeRoute" />
 
   <div
     v-else

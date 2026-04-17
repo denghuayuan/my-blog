@@ -7,14 +7,15 @@ import AdminComposeView from '@/views/AdminComposeView.vue'
 import ArticleDetailView from '@/views/ArticleDetailView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
+import PlatformHomeView from '@/views/PlatformHomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'platform-home',
+      component: PlatformHomeView,
     },
     {
       path: '/u/:username',
