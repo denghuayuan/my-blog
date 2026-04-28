@@ -85,7 +85,8 @@ export async function listPublishedArticlesHandler(_request: Request, response: 
 }
 
 export async function getPublishedArticleDetailHandler(request: Request, response: Response) {
-  const { slug } = request.params;
+  const slugParam = request.params.slug;
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
 
   if (!slug) {
     response.status(400).json({
@@ -125,7 +126,8 @@ export async function listAdminArticlesHandler(_request: Request, response: Resp
 }
 
 export async function getAdminArticleDetailHandler(request: Request, response: Response) {
-  const { id } = request.params;
+  const idParam = request.params.id;
+  const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
   if (!id) {
     response.status(400).json({
@@ -155,7 +157,8 @@ export async function getAdminArticleDetailHandler(request: Request, response: R
 }
 
 export async function updateArticleHandler(request: Request, response: Response) {
-  const { id } = request.params;
+  const idParam = request.params.id;
+  const id = Array.isArray(idParam) ? idParam[0] : idParam;
   const { title, slug, summary, bodyType, content, coverAssetId, status } = request.body as {
     title?: string;
     slug?: string;

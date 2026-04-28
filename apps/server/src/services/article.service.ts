@@ -4,16 +4,52 @@ import { UserModel } from '../models/user.model.js';
 
 function serializeAuthorProfile(user: {
   username: string;
-  displayName: string;
+  displayName?: string;
   bio?: string;
   avatar?: string;
 }) {
   return {
     username: user.username,
-    displayName: user.displayName,
+    displayName: user.displayName || user.username,
     bio: user.bio || '',
     avatar: user.avatar || ''
   };
+}
+
+function isAuthorProfile(user: unknown): user is {
+  username: string;
+  displayName?: string;
+  bio?: string;
+  avatar?: string;
+} {
+  if (!user || typeof user !== 'object') {
+    return false;
+  }
+
+  const candidate = user as {
+    username?: unknown;
+    displayName?: unknown;
+    bio?: unknown;
+    avatar?: unknown;
+  };
+
+  if (typeof candidate.username !== 'string') {
+    return false;
+  }
+
+  if (candidate.displayName !== undefined && typeof candidate.displayName !== 'string') {
+    return false;
+  }
+
+  if (candidate.bio !== undefined && typeof candidate.bio !== 'string') {
+    return false;
+  }
+
+  if (candidate.avatar !== undefined && typeof candidate.avatar !== 'string') {
+    return false;
+  }
+
+  return true;
 }
 
 function serializeArticle(article: {
@@ -42,6 +78,14 @@ function serializeArticle(article: {
     createdAt: article.createdAt,
     updatedAt: article.updatedAt
   };
+}
+
+function resolveCoverUrl(coverAsset: unknown): string {
+  if (coverAsset && typeof coverAsset === 'object' && 'url' in coverAsset) {
+    return typeof (coverAsset as { url?: unknown }).url === 'string' ? (coverAsset as { url: string }).url : '';
+  }
+
+  return '';
 }
 
 export interface CreateArticleInput {
@@ -108,7 +152,7 @@ export async function createArticle(input: CreateArticleInput) {
 
   return serializeArticle({
     ...article.toObject(),
-    coverUrl: coverAsset?.url || ''
+    coverUrl: typeof coverAsset?.url === 'string' ? coverAsset.url : ''
   });
 }
 
@@ -121,13 +165,12 @@ export async function listAdminArticles() {
 
   return articles.map((article) => ({
     author:
-      article.authorId && typeof article.authorId === 'object' && 'username' in article.authorId
+      isAuthorProfile(article.authorId)
         ? serializeAuthorProfile(article.authorId)
         : null,
     coverAssetId:
       article.coverAssetId && typeof article.coverAssetId === 'object' ? article.coverAssetId._id : article.coverAssetId,
-    coverUrl:
-      article.coverAssetId && typeof article.coverAssetId === 'object' && 'url' in article.coverAssetId ? article.coverAssetId.url : '',
+    coverUrl: resolveCoverUrl(article.coverAssetId),
     bodyType: article.bodyType,
     id: article._id,
     title: article.title,
@@ -151,15 +194,14 @@ export async function getAdminArticleById(id: string) {
 
   return {
     author:
-      article.authorId && typeof article.authorId === 'object' && 'username' in article.authorId
+      isAuthorProfile(article.authorId)
         ? serializeAuthorProfile(article.authorId)
         : null,
     article: serializeArticle({
       ...article,
       coverAssetId:
         article.coverAssetId && typeof article.coverAssetId === 'object' ? article.coverAssetId._id : article.coverAssetId,
-      coverUrl:
-        article.coverAssetId && typeof article.coverAssetId === 'object' && 'url' in article.coverAssetId ? article.coverAssetId.url : ''
+      coverUrl: resolveCoverUrl(article.coverAssetId)
     })
   };
 }
@@ -189,7 +231,7 @@ export async function updateArticleById(id: string, input: UpdateArticleInput) {
 
   return serializeArticle({
     ...article.toObject(),
-    coverUrl: coverAsset?.url || ''
+    coverUrl: typeof coverAsset?.url === 'string' ? coverAsset.url : ''
   });
 }
 
@@ -201,7 +243,7 @@ export async function listPublishedArticles() {
 
   return articles.map((article) => ({
     coverAssetId: article.coverAssetId && typeof article.coverAssetId === 'object' ? article.coverAssetId._id : article.coverAssetId,
-    coverUrl: article.coverAssetId && typeof article.coverAssetId === 'object' && 'url' in article.coverAssetId ? article.coverAssetId.url : '',
+    coverUrl: resolveCoverUrl(article.coverAssetId),
     bodyType: article.bodyType,
     id: article._id,
     title: article.title,
@@ -229,8 +271,7 @@ export async function getPublishedArticleBySlug(slug: string) {
     ...article,
     coverAssetId:
       article.coverAssetId && typeof article.coverAssetId === 'object' ? article.coverAssetId._id : article.coverAssetId,
-    coverUrl:
-      article.coverAssetId && typeof article.coverAssetId === 'object' && 'url' in article.coverAssetId ? article.coverAssetId.url : ''
+    coverUrl: resolveCoverUrl(article.coverAssetId)
   });
 }
 
@@ -267,7 +308,7 @@ export async function listPublishedArticlesByUsername(username: string) {
     author: serializeAuthorProfile(author),
     articles: articles.map((article) => ({
       coverAssetId: article.coverAssetId && typeof article.coverAssetId === 'object' ? article.coverAssetId._id : article.coverAssetId,
-      coverUrl: article.coverAssetId && typeof article.coverAssetId === 'object' && 'url' in article.coverAssetId ? article.coverAssetId.url : '',
+      coverUrl: resolveCoverUrl(article.coverAssetId),
       bodyType: article.bodyType,
       id: article._id,
       title: article.title,
@@ -307,8 +348,7 @@ export async function getPublishedArticleByUsernameAndSlug(username: string, slu
       ...article,
       coverAssetId:
         article.coverAssetId && typeof article.coverAssetId === 'object' ? article.coverAssetId._id : article.coverAssetId,
-      coverUrl:
-        article.coverAssetId && typeof article.coverAssetId === 'object' && 'url' in article.coverAssetId ? article.coverAssetId.url : ''
+      coverUrl: resolveCoverUrl(article.coverAssetId)
     })
   };
 }
