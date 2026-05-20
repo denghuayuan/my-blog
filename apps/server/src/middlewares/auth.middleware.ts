@@ -8,12 +8,6 @@ export interface AuthPayload {
   role: 'admin' | 'user';
 }
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    auth?: AuthPayload;
-  }
-}
-
 export function requireAuth(request: Request, response: Response, next: NextFunction) {
   const authorization = request.headers.authorization;
 

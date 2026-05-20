@@ -7,7 +7,8 @@ import {
 } from '../services/article.service.js';
 
 export async function getBlogProfileHandler(request: Request, response: Response) {
-  const { username } = request.params;
+  const usernameParam = request.params.username;
+  const username = Array.isArray(usernameParam) ? usernameParam[0] : usernameParam;
 
   if (!username) {
     response.status(400).json({
@@ -37,7 +38,8 @@ export async function getBlogProfileHandler(request: Request, response: Response
 }
 
 export async function listBlogArticlesHandler(request: Request, response: Response) {
-  const { username } = request.params;
+  const usernameParam = request.params.username;
+  const username = Array.isArray(usernameParam) ? usernameParam[0] : usernameParam;
 
   if (!username) {
     response.status(400).json({
@@ -67,7 +69,10 @@ export async function listBlogArticlesHandler(request: Request, response: Respon
 }
 
 export async function getBlogArticleDetailHandler(request: Request, response: Response) {
-  const { username, slug } = request.params;
+  const usernameParam = request.params.username;
+  const slugParam = request.params.slug;
+  const username = Array.isArray(usernameParam) ? usernameParam[0] : usernameParam;
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
 
   if (!username || !slug) {
     response.status(400).json({

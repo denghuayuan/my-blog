@@ -45,7 +45,8 @@ export async function uploadAssetHandler(request: Request, response: Response) {
 }
 
 export async function deleteAssetHandler(request: Request, response: Response) {
-  const { id } = request.params;
+  const idParam = request.params.id;
+  const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
   if (!id) {
     response.status(400).json({
