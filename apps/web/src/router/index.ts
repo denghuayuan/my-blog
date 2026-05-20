@@ -4,10 +4,14 @@ import { useAuthStore } from '@/stores/auth'
 import AdminArticlesView from '@/views/AdminArticlesView.vue'
 import AdminArticleEditView from '@/views/AdminArticleEditView.vue'
 import AdminComposeView from '@/views/AdminComposeView.vue'
+import AdminNovelsView from '@/views/AdminNovelsView.vue'
 import ArticleDetailView from '@/views/ArticleDetailView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import PlatformHomeView from '@/views/PlatformHomeView.vue'
+import PersonHomeView from '@/views/PersonHomeView.vue'
+import PpNovelsView from '@/views/PpNovelsView.vue'
+import PpPoemsView from '@/views/PpPoemsView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,6 +20,24 @@ const router = createRouter({
       path: '/',
       name: 'platform-home',
       component: PlatformHomeView,
+    },
+    ...['dhy', 'thp', 'hjy', 'pp'].map((person) => ({
+      path: `/${person}`,
+      name: `person-${person}`,
+      component: PersonHomeView,
+      props: {
+        person,
+      },
+    })),
+    {
+      path: '/pp/novels',
+      name: 'pp-novels',
+      component: PpNovelsView,
+    },
+    {
+      path: '/pp/poems',
+      name: 'pp-poems',
+      component: PpPoemsView,
     },
     {
       path: '/u/:username',
@@ -57,6 +79,14 @@ const router = createRouter({
       path: '/admin/articles/:id/edit',
       name: 'admin-article-edit',
       component: AdminArticleEditView,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: '/admin/novels',
+      name: 'admin-novels',
+      component: AdminNovelsView,
       meta: {
         requiresAuth: true,
       },
